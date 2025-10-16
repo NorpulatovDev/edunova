@@ -20,16 +20,14 @@ public class DataInitializer {
             TeacherRepository teacherRepository,
             StudentRepository studentRepository,
             CourseRepository courseRepository,
-            PaymentRepository paymentRepository,
-            ExpenseRepository expenseRepository,
             PasswordEncoder passwordEncoder) {
         
         return args -> {
             // Check if data already exists
-//            if (userRepository.count() > 0) {
-//                log.info("Data already initialized. Skipping...");
-//                return;
-//            }
+            if (userRepository.count() > 0) {
+                log.info("Data already initialized. Skipping...");
+                return;
+            }
             
             log.info("Starting data initialization...");
             
