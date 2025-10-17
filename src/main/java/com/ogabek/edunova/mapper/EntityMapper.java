@@ -3,6 +3,7 @@ package com.ogabek.edunova.mapper;
 import com.ogabek.edunova.dto.*;
 import com.ogabek.edunova.entity.*;
 import org.springframework.stereotype.Component;
+import java.util.stream.Collectors;
 
 @Component
 public class EntityMapper {
@@ -24,10 +25,23 @@ public class EntityMapper {
     }
 
     public StudentDTO toDTO(Student student) {
-        return new StudentDTO(
-                student.getId(),
-                student.getName()
-        );
+        StudentDTO dto = new StudentDTO();
+        dto.setId(student.getId());
+        dto.setName(student.getName());
+
+        if (student.getCourses() != null && !student.getCourses().isEmpty()) {
+            dto.setCourses(student.getCourses().stream()
+                    .filter(course -> !course.getDeleted())
+                    .map(course -> new StudentDTO.CourseInfo(
+                            course.getId(),
+                            course.getName(),
+                            course.getTeacher().getName(),
+                            course.getMonthlyFee()
+                    ))
+                    .collect(Collectors.toList()));
+        }
+
+        return dto;
     }
 
     public Student toEntity(StudentDTO dto) {
@@ -38,13 +52,24 @@ public class EntityMapper {
     }
 
     public CourseDTO toDTO(Course course) {
-        return new CourseDTO(
-                course.getId(),
-                course.getName(),
-                course.getTeacher().getId(),
-                course.getTeacher().getName(),
-                course.getMonthlyFee()
-        );
+        CourseDTO dto = new CourseDTO();
+        dto.setId(course.getId());
+        dto.setName(course.getName());
+        dto.setTeacherId(course.getTeacher().getId());
+        dto.setTeacherName(course.getTeacher().getName());
+        dto.setMonthlyFee(course.getMonthlyFee());
+
+        if (course.getStudents() != null && !course.getStudents().isEmpty()) {
+            dto.setStudents(course.getStudents().stream()
+                    .filter(student -> !student.getDeleted())
+                    .map(student -> new CourseDTO.StudentInfo(
+                            student.getId(),
+                            student.getName()
+                    ))
+                    .collect(Collectors.toList()));
+        }
+
+        return dto;
     }
 
     public PaymentDTO toDTO(Payment payment) {
