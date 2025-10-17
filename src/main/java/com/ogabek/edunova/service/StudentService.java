@@ -33,7 +33,7 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public List<StudentDTO> findAll() {
-        return studentRepository.findAllWithCourses()
+        return studentRepository.findAll()
                 .stream()
                 .map(mapper::toDTO)
                 .collect(Collectors.toList());
